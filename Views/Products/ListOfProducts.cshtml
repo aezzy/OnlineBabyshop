@@ -1,0 +1,15 @@
+﻿@model IEnumerable<OnlineBabyshop.Models.Product>
+
+
+    <table class="table">
+
+        <tr>
+
+            @foreach (var product in Model)
+            {
+            <td>
+                @Html.Partial("_ProductsSummary", product)
+            </td>
+            }
+        </tr>
+    </table>

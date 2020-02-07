@@ -22,7 +22,7 @@ namespace OnlineBabyshop.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Product.Include(p => p.gender).Include(p => p.size);
+            var applicationDbContext = _context.Product.Include(p => p.category).Include(p => p.gender).Include(p => p.size);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,6 +35,7 @@ namespace OnlineBabyshop.Controllers
             }
 
             var product = await _context.Product
+                .Include(p => p.category)
                 .Include(p => p.gender)
                 .Include(p => p.size)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
@@ -49,8 +50,9 @@ namespace OnlineBabyshop.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName");
             ViewData["GenderId"] = new SelectList(_context.Gender, "GenderId", "GenderName");
-            ViewData["SizeId"] = new SelectList(_context.Set<Size>(), "SizeId", "SizeName");
+            ViewData["SizeId"] = new SelectList(_context.Size, "SizeId", "SizeName");
             return View();
         }
 
@@ -59,7 +61,7 @@ namespace OnlineBabyshop.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDisc,Price,GenderId,SizeId")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDisc,Price,ImgUrl,GenderId,SizeId,CategoryId")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +69,9 @@ namespace OnlineBabyshop.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", product.CategoryId);
             ViewData["GenderId"] = new SelectList(_context.Gender, "GenderId", "GenderName", product.GenderId);
-            ViewData["SizeId"] = new SelectList(_context.Set<Size>(), "SizeId", "SizeName", product.SizeId);
+            ViewData["SizeId"] = new SelectList(_context.Size, "SizeId", "SizeName", product.SizeId);
             return View(product);
         }
 
@@ -85,8 +88,9 @@ namespace OnlineBabyshop.Controllers
             {
                 return NotFound();
             }
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", product.CategoryId);
             ViewData["GenderId"] = new SelectList(_context.Gender, "GenderId", "GenderName", product.GenderId);
-            ViewData["SizeId"] = new SelectList(_context.Set<Size>(), "SizeId", "SizeName", product.SizeId);
+            ViewData["SizeId"] = new SelectList(_context.Size, "SizeId", "SizeName", product.SizeId);
             return View(product);
         }
 
@@ -95,7 +99,7 @@ namespace OnlineBabyshop.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDisc,Price,GenderId,SizeId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDisc,Price,ImgUrl,GenderId,SizeId,CategoryId")] Product product)
         {
             if (id != product.ProductId)
             {
@@ -122,8 +126,9 @@ namespace OnlineBabyshop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CategoryId"] = new SelectList(_context.Category, "CategoryId", "CategoryName", product.CategoryId);
             ViewData["GenderId"] = new SelectList(_context.Gender, "GenderId", "GenderName", product.GenderId);
-            ViewData["SizeId"] = new SelectList(_context.Set<Size>(), "SizeId", "SizeName", product.SizeId);
+            ViewData["SizeId"] = new SelectList(_context.Size, "SizeId", "SizeName", product.SizeId);
             return View(product);
         }
 
@@ -136,6 +141,7 @@ namespace OnlineBabyshop.Controllers
             }
 
             var product = await _context.Product
+                .Include(p => p.category)
                 .Include(p => p.gender)
                 .Include(p => p.size)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
@@ -162,5 +168,84 @@ namespace OnlineBabyshop.Controllers
         {
             return _context.Product.Any(e => e.ProductId == id);
         }
+
+
+        public ViewResult List(int category)
+        {
+            int _category = category;
+            IEnumerable<Product> products = new List<Product>(); 
+            string currentCategoryName = string.Empty;
+
+
+            if (currentCategoryName == "View All Products")
+            {
+                products = _context.Product.OrderBy(p => p.ProductId);
+                currentCategoryName = "All Products";
+            }
+            else
+            //{
+            {
+                products = _context.Product.Where(p => p.category.CategoryId == _category);
+
+            }
+
+            return View(new ProductsListView
+            {
+                Products = products,
+                CurrentCategoryName = currentCategoryName
+            });
+        }
+
+
+        
+
+
+
+
+        public async Task<IActionResult> ListOfProducts()
+        {
+            var applicationDbContext = _context.Product.Include(p => p.category).Include(p => p.gender).Include(p => p.size);
+            return View(await applicationDbContext.ToListAsync());
+        }
+        //public  ViewResult ListOfClothes(int category)
+        //{
+        //    int _category = category;
+        //    IEnumerable<Product> products = new List<Product>();
+        //    string currentCategoryName = string.Empty;
+
+
+        //    if (currentCategoryName == "View All Products")
+        //    {
+        //        products = _context.Product.OrderBy(p => p.ProductId);
+        //        currentCategoryName = "All Products";
+        //    }
+        //    else
+        //    //{
+        //    {
+        //        products = _context.Product.Where(p => p.category.CategoryId == _category);
+
+        //    }
+
+        //    return View(new ProductsListView
+        //    {
+        //        Products = products,
+        //        CurrentCategoryName = currentCategoryName
+        //    });
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

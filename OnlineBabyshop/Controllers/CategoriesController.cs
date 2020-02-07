@@ -149,5 +149,16 @@ namespace OnlineBabyshop.Controllers
         {
             return _context.Category.Any(e => e.CategoryId == id);
         }
+
+        public IActionResult ListOfCategories()
+        {
+            var categories = _context.Category.OrderBy(p => p.CategoryName);
+            return View(categories);
+        }
+
+
+
+
+
     }
 }

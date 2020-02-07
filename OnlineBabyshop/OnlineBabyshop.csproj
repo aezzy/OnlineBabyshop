@@ -5,6 +5,27 @@
     <UserSecretsId>aspnet-OnlineBabyshop-66D63B51-058C-4581-8EFD-2E03B4F6C799</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200129095900_tenth-migration.cs" />
+    <Compile Remove="Data\Migrations\20200129095900_tenth-migration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200129100051_tenth-migration.cs" />
+    <Compile Remove="Data\Migrations\20200129100051_tenth-migration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200129101804_tenth-migration.cs" />
+    <Compile Remove="Data\Migrations\20200129101804_tenth-migration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200129102512_tenth-migration.cs" />
+    <Compile Remove="Data\Migrations\20200129102512_tenth-migration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200129104153_eleven-migration.cs" />
+    <Compile Remove="Data\Migrations\20200129104153_eleven-migration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200203092642_dddd-migration.cs" />
+    <Compile Remove="Data\Migrations\20200203092642_dddd-migration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200203093059_zzz-migration.cs" />
+    <Compile Remove="Data\Migrations\20200203093059_zzz-migration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200203094829_ddd-migraion.cs" />
+    <Compile Remove="Data\Migrations\20200203094829_ddd-migraion.Designer.cs" />
+    <Compile Remove="Migrations\20200203101507_a-migration.cs" />
+    <Compile Remove="Migrations\20200203101507_a-migration.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.0" />
@@ -14,7 +35,24 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
   </ItemGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+    <TypeScriptModuleKind />
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
 
 </Project>

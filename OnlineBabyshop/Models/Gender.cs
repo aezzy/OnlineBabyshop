@@ -9,5 +9,7 @@ namespace OnlineBabyshop.Models
     {
         public int GenderId { get; set; }
         public string GenderName { get; set; }
+
+
     }
 }

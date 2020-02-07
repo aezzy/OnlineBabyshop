@@ -1,0 +1,44 @@
+﻿@model OrderViewModel
+
+<div class="row checkoutForm">
+    <h2>Your shopping cart</h2>
+    <h4>Here are the drinks in your shopping cart.</h4>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Selected Qauntity</th>
+                <th>Product</th>
+                <th class="text-right">Price</th>
+                <th class="text-right">Subtotal</th>
+                <th class="text-right">Total</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var line in Model.Order.OrderLines)
+            {
+            <tr>
+                <td class="text-center">@line.Amount</td>
+                <td class="text-left">@line.Product.ProductName</td>
+                <td class="text-right">@line.Product.Price.ToString("c")</td>
+                <td class="text-right">
+                    @((line.Amount * line.Product.Price).ToString("c"))
+                </td>
+                <td class="text-right">
+                    @((line.OrderTotal).ToString("c"))
+                </td>
+                <td class="text-left">@line.OrderId</td>
+               
+
+            </tr>
+
+            }
+        </tbody>
+        
+    </table>
+
+    
+</div>
+
+
+

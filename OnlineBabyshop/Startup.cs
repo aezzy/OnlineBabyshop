@@ -14,6 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Http;
+using OnlineBabyshop.Models;
+using OnlineBabyshop.Data.Repositories;
+using OnlineBabyshop.Data.Interfaces;
 
 namespace OnlineBabyshop
 {
@@ -37,12 +41,11 @@ namespace OnlineBabyshop
             //services.AddControllersWithViews();
             //services.AddRazorPages();
 
-
             services.AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlServer(
                   Configuration.GetConnectionString("DefaultConnection")));
-            
-            
+
+
             services.AddIdentity<IdentityUser, IdentityRole>()
             .AddRoleManager<RoleManager<IdentityRole>>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -51,21 +54,33 @@ namespace OnlineBabyshop
 
 
 
-            services.AddMvc(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-.RequireAuthenticatedUser()
-.Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            }).AddXmlSerializerFormatters();
-            services.AddControllersWithViews();
-            services.AddRazorPages();
+            //services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<IProductsRepository, ProductsRepository>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped(sp => ShoppingCart.GetCart(sp));
+            services.AddTransient<IOrdersRepository, OrdersRepository>();
+            services.AddMemoryCache();
+            services.AddSession();
+
+
+
+
+            //            services.AddMvc(options =>
+            //            {
+            //                var policy = new AuthorizationPolicyBuilder()
+            //.RequireAuthenticatedUser()
+            //.Build();
+            //                options.Filters.Add(new AuthorizeFilter(policy));
+            //            }).AddXmlSerializerFormatters();
+            //            services.AddControllersWithViews();
+            //            services.AddRazorPages();
+            //        }
+
         }
 
-
-
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -80,6 +95,7 @@ namespace OnlineBabyshop
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
 
             app.UseRouting();
 
@@ -90,9 +106,45 @@ namespace OnlineBabyshop
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Products}/{action=Index}/{id?}");
+                    pattern: "{controller=Categories}/{action=ListOfCategories}/{id?}");
                 endpoints.MapRazorPages();
             });
+            CreateRoles(serviceProvider);
+
         }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            //var db = new ApplicationDbContext();
+            //var store = new RoleManager<IdentityRole>(db);
+            //var roleManager = new RoleManager<IdentityRole>(store);
+            //roleManager.Create(new IdentityRole("Admin"));
+            //roleManager.Delete(roleManager.FindByName("Moderator"));
+
+            IdentityResult roleResult;
+            //here in this line we are adding Admin Role
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck)
+            {
+                //here in this line we are creating admin role and seed it to the database
+                roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+            //here we are assigning the Admin role to the User that we have registered above 
+            //Now, we are assinging admin role to this user("Ali@gmail.com"). When will we run this project then it will
+            //be assigned to that user.
+            IdentityUser user = await UserManager.FindByEmailAsync("admin@123.com");
+            var User = new IdentityUser();
+            await UserManager.AddToRoleAsync(user, "Admin");
+        }
+
+
+
+
+
+
+
     }
 }
